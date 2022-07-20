@@ -16,3 +16,4 @@ message(">>> PROJECT_SOURCE_DIR: ${PROJECT_SOURCE_DIR}")
 message(">>> PROJECT_BINARY_DIR: ${PROJECT_BINARY_DIR}")
 
 add_subdirectory(select/)
+add_subdirectory(simple_tcp_client/)

@@ -1,0 +1,1 @@
+add_executable(simple_tcp_client simple_tcp_client.c)
