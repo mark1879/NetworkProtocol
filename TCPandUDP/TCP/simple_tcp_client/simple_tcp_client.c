@@ -68,7 +68,7 @@ int main(int argc, char **argv)
     // 任何时候，最后一个字符都是 '\0'; 只有参数 size - 输入字符串长度 >= 2, 末尾才会添加 '\n'。
     while (fgets(send_buf, BUF_MAX_LEN - 2, stdin) != NULL)
     {
-        printf("Send: %s strlen: %lu\n", send_buf, strlen(send_buf));
+        printf("Send: %s \n", send_buf);
         
         if (strncmp(send_buf, "out", 3) == 0)
             break;
@@ -76,26 +76,28 @@ int main(int argc, char **argv)
         // 把输入的字符串发送到服务器中去
         // strlen返回字符串的长度，但不包括\0
         int send_bytes = (int)send(sockfd, send_buf, strlen(send_buf), 0);
-        if (send_bytes <= 0) 
+        printf("send bytes: %d\n", send_bytes);
+        if (send_bytes < 0) 
             error(0, errno, "send failed!");
+        else if (send_bytes == 0)
+            error(0, errno, "server has been terminated!");
         
         sleep(2);
         
-        while (1)
-        {
-            int recv_bytes = (int)read(sockfd, recv_buf, BUF_MAX_LEN  - 1);
-            
-            if (recv_bytes <= 0) {
-                error(0, errno, "recv failed!");
-                break;
-            }else {
-                printf("recv: %s\n", recv_buf);
-            }
-            
-            memset(recv_buf, 0, BUF_MAX_LEN);
+        int recv_bytes = (int)read(sockfd, recv_buf, BUF_MAX_LEN  - 1);
+        printf("recv bytes: %d\n", recv_bytes);
+
+        if (recv_bytes > 0) {
+            recv_buf[recv_bytes] = '\0';
+            printf("recv: %s\n", recv_buf);
+        }
+        else if (recv_bytes == 0) {
+            error(0, errno, "server has been terminated!");
+        } else {
+            error(0, errno, "recv failed!");
         }
         
-        memset(send_buf, 0, BUF_MAX_LEN);
+        memset(recv_buf, 0, BUF_MAX_LEN);
         
         printf("Please input: \n");
     }

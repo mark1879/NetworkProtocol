@@ -42,9 +42,8 @@ int main(int argc, char** argv) {
                 printf("sending: %s\n", send_buf);
 
                 ssize_t write_bytes = write(socket_fd, send_buf, strlen(send_buf));
-                if (write_bytes > 0) {
-                    printf("sended %lu bytes successfully!\n", write_bytes);
-                } else if (write_bytes == 0) {
+                printf("write bytes: %zd\n", write_bytes);
+                if (write_bytes == 0) {
                     error(1, errno, "server has been terminated!");
                 } else {
                     error(0, errno, "write failed!");
