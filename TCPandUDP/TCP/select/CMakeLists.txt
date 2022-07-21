@@ -1,1 +1,1 @@
-add_executable(select select.c)
+add_executable(select_client select_client.c)

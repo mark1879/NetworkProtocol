@@ -55,12 +55,19 @@ int main(int argc, char **argv) {
                 if (recv_bytes > 0) {
                     recv_buf[recv_bytes] = 0;
                     printf("recv: %s\n\n", recv_buf);
+
+                    str_toupper(recv_buf);
+
+                    int write_bytes = write(socket_fd, recv_buf, strlen(recv_buf));
+                    if (write_bytes <= 0) {
+                        error(0, errno, "write failed!");
+                    }
                 } else if (recv_bytes == 0) {
                     close(socket_fd);
                     events_set[i].fd = -1;
-                    error(0, errno, "read error!");
+                    error(0, errno, "client has been terminated!");
                 } else {
-                    error(1, errno, "read error!");
+                    error(0, errno, "read failed!");
                 }
 
                 if (--ready_num <= 0)

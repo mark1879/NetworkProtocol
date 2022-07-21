@@ -6,6 +6,8 @@ int main(int argc, char** argv) {
 
     int socket_fd = tcp_client(argv[1], SERVER_PORT);
 
+    setnoblocking(socket_fd);
+
     fd_set all_fds;
 
     FD_ZERO(&all_fds);
@@ -25,25 +27,28 @@ int main(int argc, char** argv) {
         if (FD_ISSET(socket_fd, &read_mask)) {
             ssize_t read_bytes = read(socket_fd, recv_buf, BUF_MAX_LEN - 1);
 
-            if (read_bytes < 0)
-                error(1, errno, "read error!");
+            if (read_bytes > 0) {
+                recv_buf[read_bytes] = '\0';
+                printf("recv: %s\n", recv_buf);
+            }
             else if (read_bytes == 0)
-                error(1, 0, "server terminated!");
-
-            recv_buf[read_bytes] = '\0';
-            fputs(recv_buf, stdout);
-            fputs("\n", stdout);
+                error(1, 0, "server has been terminated!");
+            else 
+                error(0, errno, "read failed!");
         }
 
         if (FD_ISSET(STDIN_FILENO, &read_mask)) {
             if (fgets(send_buf, BUF_MAX_LEN - 2, stdin) != NULL) {
-                printf("now sending: %s\n", send_buf);
+                printf("sending: %s\n", send_buf);
 
                 ssize_t write_bytes = write(socket_fd, send_buf, strlen(send_buf));
-                if (write_bytes < 0)
-                    error(1, errno, "write failed!");
-
-                printf("sended bytes: %zd\n", write_bytes);
+                if (write_bytes > 0) {
+                    printf("sended %lu bytes successfully!\n", write_bytes);
+                } else if (write_bytes == 0) {
+                    error(1, errno, "server has been terminated!");
+                } else {
+                    error(0, errno, "write failed!");
+                }
             }
         }
     }

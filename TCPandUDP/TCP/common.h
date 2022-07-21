@@ -84,5 +84,13 @@ int tcp_server_listen(int port) {
     return listen_fd;
 }
 
+void str_toupper(char *str)
+{
+    int i;
+    for (i = 0; i < strlen(str); i ++) {
+        str[i] = toupper(str[i]);
+    }
+}
+
 
 #endif
