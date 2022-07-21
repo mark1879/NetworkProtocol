@@ -68,7 +68,7 @@ int main(int argc, char **argv)
     // 任何时候，最后一个字符都是 '\0'; 只有参数 size - 输入字符串长度 >= 2, 末尾才会添加 '\n'。
     while (fgets(send_buf, BUF_MAX_LEN - 2, stdin) != NULL)
     {
-        printf("Send: %s\n", send_buf);
+        printf("Send: %s strlen: %lu\n", send_buf, strlen(send_buf));
         
         if (strncmp(send_buf, "out", 3) == 0)
             break;
