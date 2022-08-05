@@ -14,10 +14,21 @@
 #include <stdarg.h>
 #include <poll.h>
 
+#include "config.h"
+
+#ifdef EPOLL_ENABLE
+#include    <sys/epoll.h>
+#endif
+
 
 #define SERVER_PORT 7766
 #define BUF_MAX_LEN 4096
 #define LISTEN_QUEUE_LEN 128
+#define EPOLL_MAX_NUM    2048
+
+#define bool char
+#define YES 1
+#define NO  0
 
 void error(int status, int err, char *fmt, ...) {
     va_list ap;
@@ -58,10 +69,13 @@ int tcp_client(char *address, int port) {
     return socket_fd;
 }
 
-int tcp_server_listen(int port) {
+int tcp_server_listen(int port, bool nonblocking) {
     int listen_fd = socket(AF_INET, SOCK_STREAM, 0);
     if (listen_fd < 0)
         error(1, errno, "create socket failed!");
+
+    if (nonblocking == YES)
+        setnoblocking(listen_fd);
 
     struct sockaddr_in server_addr;
     bzero(&server_addr, sizeof(server_addr));

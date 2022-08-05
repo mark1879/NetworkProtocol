@@ -4,7 +4,7 @@
 
 int main(int argc, char **argv) {
 
-    int listen_fd = tcp_server_listen(SERVER_PORT);
+    int listen_fd = tcp_server_listen(SERVER_PORT, YES);
 
     struct pollfd events_set[MAX_POLL_SIZE];
     events_set[0].fd = listen_fd;
