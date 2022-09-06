@@ -33,5 +33,6 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR}/include)
 
 add_subdirectory(select/)
 add_subdirectory(simple_tcp_client/)
+add_subdirectory(simple_tcp_server/)
 add_subdirectory(poll/)
 add_subdirectory(epoll/)
