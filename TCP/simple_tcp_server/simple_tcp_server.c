@@ -7,12 +7,14 @@
 
 #include "common.h"
 
-int main(int argc, char **argv){
+int main(int argc, char **argv) {
 
     int listen_fd = tcp_server_listen(SERVER_PORT, NO);
 
     struct sockaddr_in client_addr;
     socklen_t   client_len;
+
+    printf("listening...\n");
 
     int client_fd = accept(listen_fd, (struct sockaddr*)&client_addr, &client_len);
     if (client_fd < 0)
@@ -35,20 +37,21 @@ int main(int argc, char **argv){
             printf("write bytes: %d\n", write_bytes);
 
             if (write_bytes < 0)
-                error(1, errno, "write failed!");
+                error(0, errno, "write failed!");
             else if (write_bytes == 0)
-                error(1, errno, "client has been terminated!");
+                error(0, errno, "client has been terminated!");
 
         } else if (recv_bytes == 0) {
             error(0, errno, "client has been terminated!");
-            break;
         } else {
-            error(1, errno, "recv failed!");
+            error(0, errno, "recv failed!");
         }
     }
    
     close(client_fd);
     close(listen_fd);
+
+    printf("close socket!\n");
 
     return 0;
 }

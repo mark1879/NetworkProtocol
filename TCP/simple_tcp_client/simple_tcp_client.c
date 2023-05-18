@@ -58,7 +58,7 @@ int main(int argc, char **argv)
     if (ret < 0)
         error(1, errno, "connect failed!");
 
-    setnoblocking(sockfd);
+    // setnoblocking(sockfd);
 
     char send_buf[BUF_MAX_LEN] = {0};
     char recv_buf[BUF_MAX_LEN] = {0};
@@ -72,6 +72,18 @@ int main(int argc, char **argv)
         
         if (strncmp(send_buf, "out", 3) == 0)
             break;
+
+        if (strncmp(send_buf, "shutw", 5) == 0)
+        {
+            printf("shutdown write\n");
+            shutdown(sockfd, SHUT_WR);
+        }
+
+        if (strncmp(send_buf, "shutr", 5) == 0)
+        {
+            printf("shutdown read\n");
+            shutdown(sockfd, SHUT_RD);
+        }
         
         // 把输入的字符串发送到服务器中去
         // strlen返回字符串的长度，但不包括\0
@@ -103,6 +115,8 @@ int main(int argc, char **argv)
     }
     
     close(sockfd);
+
+    printf("close socket!\n");
 
     return 0;
 }
