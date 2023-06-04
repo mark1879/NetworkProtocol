@@ -22,12 +22,15 @@ int main(int argc, char **argv) {
 
     char recv_buf[BUF_MAX_LEN];
 
-    while (1) {
+    int run = 1;
 
+    while (run) 
+    {
         int recv_bytes = (int)read(client_fd, recv_buf, BUF_MAX_LEN - 1);
         printf("recv bytes: %d\n", recv_bytes);
 
-        if (recv_bytes > 0) {
+        if (recv_bytes > 0) 
+        {
             recv_buf[recv_bytes] = 0;
             printf("recv: %s\n", recv_buf);
 
@@ -35,15 +38,22 @@ int main(int argc, char **argv) {
 
             int write_bytes = write(client_fd, recv_buf, strlen(recv_buf));
             printf("write bytes: %d\n", write_bytes);
-
+        
             if (write_bytes < 0)
                 error(0, errno, "write failed!");
             else if (write_bytes == 0)
+            {
+                run = 0;
                 error(0, errno, "client has been terminated!");
-
-        } else if (recv_bytes == 0) {
+            }
+        } 
+        else if (recv_bytes == 0) 
+        {
+            run = 0;
             error(0, errno, "client has been terminated!");
-        } else {
+        } 
+        else
+        {
             error(0, errno, "recv failed!");
         }
     }
